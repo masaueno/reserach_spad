@@ -12,7 +12,6 @@ from scipy.signal import argrelmax, find_peaks
 def app():
     with st.sidebar:
         csv_input = st.file_uploader("spad_csv", type="csv")
-        st.session_state["csv_input"] = csv_input
         sampleing_step = st.number_input("sampling step", min_value=1)
 
         should_select_receptor = st.checkbox("select_receptor")
