@@ -9,7 +9,7 @@ def main():
     app = MultiApp()
 
     # Add all your application here
-    app.add_app("plot", plot_spad.app)
+    app.add_app("plot_spad", plot_spad.app)
 
     # The main app
     app.run()
