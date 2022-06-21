@@ -5,12 +5,19 @@ import plotly.figure_factory as ff
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-df = pd.read_csv("data/spad_output/2205121705_flowCyto96(5).csv", skiprows=5)
+df = pd.read_csv("data/spad_output/2206021817_flowCyto96.csv", skiprows=5)
 df_new = df.drop(columns="No.")
 
-step = 10
-df_selected = df_new[::step]
+step = 3
+df_red = df_new[0::step]
+df_blue = df_new[1::step]
+df_green = df_new[2::step]
 
+fig = px.line(df_red)
+fig.show()
 
-fig = px.line(df_new[25000:30000])
+fig = px.line(df_blue)
+fig.show()
+
+fig = px.line(df_green)
 fig.show()
