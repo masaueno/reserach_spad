@@ -28,7 +28,7 @@ def app():
 
         should_detect_peaks = st.checkbox("detect peak")
         if should_detect_peaks:
-            prominence = st.number_input("prominence", min_value=0, value=200)
+            prominence = st.number_input("prominence", min_value=0, value=100)
 
     """Figure View"""
     if st.session_state["csv_input"]:

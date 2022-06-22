@@ -22,6 +22,10 @@ def app():
         noisesup = st.number_input("noisesup", value=2.5)
         compress = st.number_input("compress", value=1)
 
+        should_detect_peaks = st.checkbox("detect peak")
+        if should_detect_peaks:
+            prominence = st.number_input("prominence", min_value=0, value=100)
+
     """Figure View"""
     if st.session_state["csv_input"]:
         df = pd.read_csv(st.session_state["csv_input"], skiprows=5)
@@ -77,6 +81,21 @@ def app():
                         ),
                     )
                 )
+
+                # Detect and plot peaks
+                if should_detect_peaks:
+                    array = (yc.iloc[windsize:] + y_shift).to_numpy()
+                    peak_indices = find_peaks(array * 100, prominence=prominence)[0]  # type: ignore
+                    fig.add_trace(
+                        go.Scatter(
+                            x=xs[peak_indices],
+                            y=array[peak_indices],
+                            mode="markers",
+                            marker=dict(size=8, color="red", symbol="cross"),
+                            showlegend=False,
+                        )
+                    )
+
                 y_shift += -1
 
             fig.update_layout(showlegend=True)
