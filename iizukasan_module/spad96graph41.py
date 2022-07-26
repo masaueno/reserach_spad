@@ -51,9 +51,13 @@ xs = df["No."] * delta
 
 y_shift = (number2 - number1 + 1) * 6
 
-df_style = pd.read_csv("style.csv", usecols=[0, 1], dtype={"background": object}, nrows=1)
+df_style = pd.read_csv(
+    "style.csv", usecols=[0, 1], dtype={"background": object}, nrows=1
+)
 
-df_color = pd.read_csv("style.csv", encoding="cp932", dtype=object, index_col=0, skiprows=2)
+df_color = pd.read_csv(
+    "style.csv", encoding="cp932", dtype=object, index_col=0, skiprows=2
+)
 
 
 for raw_number in range(number1, number2 + 1):
@@ -67,7 +71,10 @@ for raw_number in range(number1, number2 + 1):
                 x=xs,
                 y=df[column_name] + y_shift,
                 name=column_name,
-                line=dict(color=df_color.at["R" + str(raw_number), "C" + str(co_number)], width=df_style.iat[0, 1]),
+                line=dict(
+                    color=df_color.at["R" + str(raw_number), "C" + str(co_number)],
+                    width=df_style.iat[0, 1],
+                ),
             )
         )
         y_shift += 0

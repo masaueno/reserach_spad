@@ -21,6 +21,7 @@ def app():
         windsize = st.number_input("wind_size", value=30)
         noisesup = st.number_input("noisesup", value=2.5)
         compress = st.number_input("compress", value=1)
+        num_laser = st.number_input("num_laser", value=1)
 
         should_detect_peaks = st.checkbox("detect peak")
         if should_detect_peaks:
@@ -28,10 +29,28 @@ def app():
 
     """Figure View"""
     if st.session_state["csv_input"]:
-        df = pd.read_csv(st.session_state["csv_input"], skiprows=5)
+        df_total = pd.read_csv(st.session_state["csv_input"], skiprows=5)
+        delta = df.iat[3, 1]
+        total_laser = df.iat[2, 1]
+
+        if total_laser == 1:
+            df = df_total
+        elif total_laser == 2:
+            if num_laser == 0:
+                df = df_total[0::2]
+            elif num_laser == 1:
+                df = df_total[1::2]
+        elif total_laser == 3:
+            if num_laser == 0:
+                df = df_total[0::3]
+            elif num_laser == 1:
+                df = df_total[1::3]
+            elif num_laser == 2:
+                df = df_total[2::3]
+
         fig = go.Figure()
 
-        xs = df["No."].iloc[windsize // 2 :]
+        xs = df["No."].iloc[windsize // 2 :] * delta
 
         y_shift = (raw2 - raw1 + 1) * 6
         df_style = pd.read_csv(
@@ -118,7 +137,9 @@ def app():
                 + ",  noise suppression height ="
                 + str(noisesup)
                 + ", peak compression ="
-                + str(compress),
+                + str(compress)
+                + ", laser num ="
+                + str(num_laser),
                 "y": 0.9,
                 "x": 0.5,
                 "xanchor": "center",

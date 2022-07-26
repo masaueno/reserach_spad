@@ -9,10 +9,10 @@ from matplotlib import colors
 from matplotlib import pyplot as plt
 
 # usage
-# run SPAD96graph7.py inputfile  raw1 raw2 wind_size noise_supression_height peak_compression_flag
+# run SPAD96graph7.py inputfile  raw1 raw2 wind_size noise_supression_height peak_compression_flag total_laser
 #
 
-if len(sys.argv) < 6:
+if len(sys.argv) < 8:
     print("more arg required")
     sys.exit()
 
@@ -48,6 +48,12 @@ except ValueError:
     print("arg6 must be 0 or 1")
     sys.exit()
 
+try:
+    num_laser = int(sys.argv[7])
+except ValueError:
+    print("arg7 must be 0 or 1 or 2")
+    sys.exit()
+
 p_file = pathlib.Path(input_file)
 if not os.path.isfile(input_file):
     print("file not found")
@@ -77,12 +83,33 @@ if compress > 1 or compress < 0:
     print("peak_compression_flag must be 0 or 1")
     sys.exit()
 
-
 df = pd.read_csv(input_file, nrows=4)
 delta = df.iat[3, 1]
+total_laser = df.iat[2, 1]
 
-df = pd.read_csv(input_file, skiprows=5)
+if num_laser > total_laser - 1 or num_laser < 0:
+    print("num_laser must be < #total_laser")
+    sys.exit()
+
+df_total = pd.read_csv(input_file, skiprows=5)
+
+if total_laser == 1:
+    df = df_total
+elif total_laser == 2:
+    if num_laser == 0:
+        df = df_total[0::2]
+    elif num_laser == 1:
+        df = df_total[1::2]
+elif total_laser == 3:
+    if num_laser == 0:
+        df = df_total[0::3]
+    elif num_laser == 1:
+        df = df_total[1::3]
+    elif num_laser == 2:
+        df = df_total[2::3]
+
 fig = go.Figure()
+
 
 xs = df["No."].iloc[windsize // 2 :] * delta
 
@@ -153,10 +180,12 @@ fig.update_layout(
     title={
         "text": "window size ="
         + str(windsize)
-        + ",  noise suppression height ="
+        + ",  noise supp height ="
         + str(noisesup)
         + ", peak compression ="
-        + str(compress),
+        + str(compress)
+        + ", laser num ="
+        + str(num_laser),
         "y": 0.9,
         "x": 0.5,
         "xanchor": "center",
